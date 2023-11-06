@@ -1,3 +1,5 @@
+# This is all the functions necessary for our script to run, and placed in a separate sheet as per the instructions.
+
 # import "random". This will give us a function that will allow us to choose a random integer.
 import random
 
@@ -65,7 +67,7 @@ def playerName():
         quitGame()
 
 
-# Define the game function. This is just like the guessing game from last time.
+# Define the game function. This is just like the guessing game from last time, except I had to rework my terrible code.
 def guessingGame():
     try:
         # have the player enter their guess
@@ -105,6 +107,7 @@ def guessingGame():
                 # If the user inputs the correct guess, then this returns
                 elif int(guess) == number:
                     print(f'Good job! You guessed the right number in {number_of_guesses} guesses!')
+                    showNewList()
                     playAgain()
             else:
                 print(f"{guess} is not a valid entry. Try again.")
@@ -124,27 +127,70 @@ def guessingGame():
         exit()
 
 
-def createList():
-    scoreList = list()
-    with open("topPlayers.txt", "w") as file:
-        for line in file:
-            scoreList.append([int(line[0:10]), line[10:].rstrip()])
-    return scoreList
+# Function to take players name and information (i) for the score
+# We will use this function back on the main.py page
+def scoreUpdate(playersName, i):
+    # Create a blank list into which we put the names and scores
+    players = []
+
+    # The following code reads all lines from current txt file into our blank list from above
+    # Be sure that you use "r" for reading
+    # None of this works unless you already have Ken's blank list in the same folder
+    fixedWidthFile = open("topPlayers.txt", "r")
+    for eachLine in fixedWidthFile.readlines():
+        score = eachLine[0:10].rstrip().lstrip()
+        player = eachLine[10:20].rstrip().lstrip()
+        myList = [score, player]
+        players.append(myList)
+
+    # Remember to close the file so no mistakes happen
+    fixedWidthFile.close()
+
+    # This will add our new player scores (provided you beat the previous players)
+    players.append([str(i), playersName])
+
+    # Now we sort the players using lambda
+    players.sort(key=lambda x: (int(x[0])))
+
+    # This presents the scores nicely when we print them
+    for eachLine in players[0:5]:
+        [score, player] = eachLine
+        score = score + "          "
+        new = score + player
+        players.append(new)
+        print(f"{score}{player}")
+
+    # We need to update the txt file with new top scores
+    fixedWidthFile = open("topPlayers.txt", "w")
+    for eachLine in players[0:5]:
+        fixedWidthFile.write(eachLine[0] + "         ")
+        fixedWidthFile.write(eachLine[1])
+        fixedWidthFile.write("\n")
+
+    fixedWidthFile.close()
 
 
-def newHighScore(name, number_of_guesses):
-    scoreList = createList()
-    if number_of_guesses < scoreList[4][0]:
-        del scoreList[-1]
-        scoreList.append([number_of_guesses, name])
-        scoreList.sort(key=lambda entry: entry[0])
-        with open("topPlayers.txt", "w") as file:
-            for entry in scoreList:
-                file.write(str(entry[0]).ljust(10) + entry[1] + "\n")
+# This is an empty list to be used for storing values in the function below
+temporary = []
 
 
-def highScores():
-    scoreList = createList()
-    print(f" Scores \n".center(20, "="))
-    for each in scoreList:
-        print(str(each[0]).ljust(10) + each[1])
+# This function shows the updated score list to the player upon completion
+def showNewList():
+    # Read the file and write to the empty list
+    fixedWidthFile = open("topPlayers.txt", "r")
+    for eachLine in fixedWidthFile.readlines():
+        score = eachLine[0:10].rstrip().lstrip()
+        player = eachLine[10:20].rstrip().lstrip()
+        myList = [score, player]
+        temporary.append(myList)
+
+    # Remember to close the file again
+    fixedWidthFile.close()
+
+    # This will print each line of the list to show the top scoring players
+    for eachLine in temporary[0:5]:
+        [score, player] = eachLine
+        score = score + "          "
+        new = score + player
+        temporary.append(new)
+        print(f"{score}{player}")

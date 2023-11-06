@@ -47,10 +47,9 @@ Example file: topPlayers.txt
 # importing all our functions to the main file as gameFunctions
 import New_Functions as gameFunctions
 
+# run a while True function and set name = playerName function and game = the guessingGame function
 while True:
     name = gameFunctions.playerName()
     game = gameFunctions.guessingGame()
-
-    gameFunctions.newHighScore(name, game)
-
-    print("That's the updated version of the Number Guessing Game! Thanks for playing version 2.0.")
+    # This will not run unless I define "playersName=name, i=game". I can't just put (name, game)
+    gameFunctions.scoreUpdate(playersName=name, i=game)
